@@ -6,55 +6,59 @@
 Module ShuffleTheDeck
 
     Sub Main()
-        Dim Card(51) As String
-        Dim suit() As String = {"♠", "♥", "♣", "♦"}
-        Dim value() As String = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"}
 
-        'Assigns card value to each element of the array
-        For i = LBound(Card) To UBound(Card)
-            For j = LBound(suit) To UBound(suit)
-                For k = LBound(value) To UBound(value)
-                    Card(i) &= $"{suit(j)}{value(k)}"
-                    i += 1
-                Next
-            Next
+        Dim deck(3, 12) As Boolean
+        Dim row As Integer
+        Dim collumn As Integer
+        Dim pull As Integer
+
+        Console.WriteLine("How many cards would you like to draw?")
+        pull = Console.ReadLine()
+
+
+        For i = 1 To pull 'runs randomizer switching boolean array to true and repeats ranomizer if already true
+            Do
+                row = Roll(4)
+                collumn = Roll(13)
+            Loop Until deck(row, collumn) = False
+            deck(row, collumn) = True
         Next
 
-        For i = LBound(Card) To UBound(Card)
-            Console.WriteLine(Card(i))
-        Next
+        'runs the display subroutine
+        DisplayDeck(deck)
 
-        For i = 1 To 26
-            Console.WriteLine("Take a card, any card!           (press enter)")
-            Console.WriteLine(DrawACard)
-        Next
 
         Console.ReadLine()
     End Sub
-
-    Function DrawACard() As Integer
-        Randomize()
-        Static Dim pull(25) As Integer
-        Static Dim pullNumber As Integer
-        Dim newValue As Boolean = False
-        Dim value As Integer
-
-        pullNumber += 1
-
-        Do
-            value = CInt(Int((52 * Rnd())))
-            pull(pullNumber) = value
-
-            For i = LBound(pull) To UBound(pull)
-                If pull(i) <> value Then
-                    newValue = True
-                ElseIf pull(i) = value Then
-                    newValue = False
-                End If
-            Next
-        Loop Until newValue = True
-
-        Return value 'Outputs a random value between 0 and 51
+    Function Roll(value As Integer) As Integer
+        Randomize(DateTime.Now.Millisecond)
+        Dim number As Integer
+        number = CInt(Int((value * Rnd())))
+        Return number
     End Function
+    Sub DisplayDeck(ByRef deck(,) As Boolean)
+        Dim header() As String = {"♠", "♥", "♣", "♦"}
+        Dim face() As String = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"}
+        Dim columnWidth As Integer = 3
+        Dim columnData As String
 
+        For row = 0 To deck.GetLength(1)
+            For column = 0 To deck.GetLength(0) - 1
+                Select Case row
+                    Case 0 'first row is column headers
+                        columnData = header(column).PadLeft(columnWidth)
+                    Case Else
+                        If Not deck(column, row - 1) Then 'mark if card has been drawn
+                            columnData = "  "
+                        Else 'show face value if card hasn't been drawn
+                            columnData = face(row - 1)
+                        End If
+                End Select
+                Console.Write(columnData.PadLeft(columnWidth) & " |")
+            Next
+            Console.WriteLine()
+            Console.WriteLine(StrDup(20, "-"))
+        Next
+
+    End Sub
 End Module
