@@ -83,15 +83,12 @@ Module ShuffleTheDeck
             Console.WriteLine()
             Console.WriteLine(StrDup(20, "-"))
         Next
-
     End Sub
-
     Sub Shuffle(ByRef deck(,) As Boolean)
         For row = 0 To 3
             For column = 0 To 12
                 deck(row, column) = False
             Next
         Next
-
     End Sub
 End Module
